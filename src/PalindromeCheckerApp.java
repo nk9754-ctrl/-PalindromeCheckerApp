@@ -2,20 +2,35 @@
 
 import java.util.*;
 
-
-interface PalindromeStrategy {
-    boolean check(String input);
-}
+public class PalindromeCheckerApp {
 
 
-class StackStrategy implements PalindromeStrategy {
-    @Override
-    public boolean check(String input) {
-        java.util.Stack<Character> stack = new java.util.Stack<>();
+    public static boolean iterativeCheck(String input) {
+        int start = 0;
+        int end = input.length() - 1;
+        while (start < end) {
+            if (input.charAt(start) != input.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
+
+
+    public static boolean recursiveCheck(String input, int start, int end) {
+        if (start >= end) return true;
+        if (input.charAt(start) != input.charAt(end)) return false;
+        return recursiveCheck(input, start + 1, end - 1);
+    }
+
+
+    public static boolean stackCheck(String input) {
+        Stack<Character> stack = new Stack<>();
         for (char c : input.toCharArray()) {
             stack.push(c);
         }
-
         for (char c : input.toCharArray()) {
             if (stack.pop() != c) {
                 return false;
@@ -23,17 +38,13 @@ class StackStrategy implements PalindromeStrategy {
         }
         return true;
     }
-}
 
 
-class DequeStrategy implements PalindromeStrategy {
-    @Override
-    public boolean check(String input) {
+    public static boolean dequeCheck(String input) {
         Deque<Character> deque = new ArrayDeque<>();
         for (char c : input.toCharArray()) {
             deque.add(c);
         }
-
         while (deque.size() > 1) {
             if (deque.pollFirst() != deque.pollLast()) {
                 return false;
@@ -41,47 +52,43 @@ class DequeStrategy implements PalindromeStrategy {
         }
         return true;
     }
-}
 
-class PalindromeService {
-    private PalindromeStrategy strategy;
-
-
-    public PalindromeService(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean checkPalindrome(String input) {
-        return strategy.check(input);
-    }
-}
-
-
-public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
         System.out.print("Enter a string: ");
         String input = sc.nextLine();
 
-        System.out.println("Choose strategy: 1 for Stack, 2 for Deque");
-        int choice = sc.nextInt();
 
-        PalindromeStrategy strategy;
-        if (choice == 1) {
-            strategy = new StackStrategy();
-        } else {
-            strategy = new DequeStrategy();
-        }
+        long startTime = System.nanoTime();
+        boolean iterativeResult = iterativeCheck(input);
+        long endTime = System.nanoTime();
+        long iterativeTime = endTime - startTime;
 
-        PalindromeService service = new PalindromeService(strategy);
-        boolean result = service.checkPalindrome(input);
 
-        if (result) {
-            System.out.println("The string \"" + input + "\" is a palindrome.");
-        } else {
-            System.out.println("The string \"" + input + "\" is NOT a palindrome.");
-        }
+        startTime = System.nanoTime();
+        boolean recursiveResult = recursiveCheck(input, 0, input.length() - 1);
+        endTime = System.nanoTime();
+        long recursiveTime = endTime - startTime;
+
+        startTime = System.nanoTime();
+        boolean stackResult = stackCheck(input);
+        endTime = System.nanoTime();
+        long stackTime = endTime - startTime;
+
+
+        startTime = System.nanoTime();
+        boolean dequeResult = dequeCheck(input);
+        endTime = System.nanoTime();
+        long dequeTime = endTime - startTime;
+
+
+        System.out.println("\nPerformance Comparison:");
+        System.out.println("-------------------------------------------------");
+        System.out.printf("Iterative: %-5s | Time: %d ns%n", iterativeResult, iterativeTime);
+        System.out.printf("Recursive: %-5s | Time: %d ns%n", recursiveResult, recursiveTime);
+        System.out.printf("Stack:     %-5s | Time: %d ns%n", stackResult, stackTime);
+        System.out.printf("Deque:     %-5s | Time: %d ns%n", dequeResult, dequeTime);
+        System.out.println("-------------------------------------------------");
 
         sc.close();
     }
