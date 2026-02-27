@@ -1,35 +1,32 @@
+
+
 import java.util.Scanner;
-import java.util.Deque;
-import java.util.ArrayDeque;
-class PalindromeCheckerApp {
+
+public class PalindromeCheckerApp {
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter a string: ");
+        String input = sc.nextLine();
+
+        String normalized = input.replaceAll("\\s+", "").toLowerCase();
 
 
-                System.out.print("Enter a string to check: ");
-                String input = scanner.nextLine();
-
-                Deque<Character> deque = new ArrayDeque<>();
-                for (char c : input.toCharArray()) {
-                    deque.add(c);
-                }
-
-                boolean isPalindrome = true;
-                while (deque.size() > 1) {
-                    char front = deque.removeFirst();
-                    char rear = deque.removeLast();
-                    if (front != rear) {
-                        isPalindrome = false;
-                        break;
-                    }
-                }
-
-                if (isPalindrome) {
-                    System.out.println("The string \"" + input + "\" is a palindrome.");
-                } else {
-                    System.out.println("The string \"" + input + "\" is NOT a palindrome.");
-                }
-
-                scanner.close();
+        boolean isPalindrome = true;
+        for (int i = 0; i < normalized.length() / 2; i++) {
+            if (normalized.charAt(i) != normalized.charAt(normalized.length() - 1 - i)) {
+                isPalindrome = false;
+                break;
             }
         }
+
+
+        if (isPalindrome) {
+            System.out.println("The string \"" + input + "\" is a palindrome (ignoring case and spaces).");
+        } else {
+            System.out.println("The string \"" + input + "\" is NOT a palindrome (ignoring case and spaces).");
+        }
+
+        sc.close();
+    }
+}
